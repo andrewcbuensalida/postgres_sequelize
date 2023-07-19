@@ -1,3 +1,4 @@
+// This file doesn't seem to be used
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
@@ -13,7 +14,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: "John",
-        get() {
+        get() { // process data before returning to client
           const rawValue = this.getDataValue("firstName");
           return rawValue ? rawValue.toUpperCase() : null;
         },
