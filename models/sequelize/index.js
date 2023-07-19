@@ -1,62 +1,75 @@
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const User = sequelize.define('User', {
-    id:{
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+  const User = sequelize.define(
+    "User",
+    {
+      // this will be pluralized and will be the table name, unless you specify it in the tableName option below
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "John",
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "Doe",
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: 'John',
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: 'Doe'
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false
+    {
+      timestamps: true,
     }
-  },{
-    timestamps:true,
-  });
+  );
 
-  const ContactInfo = sequelize.define('ContactInfo', {
-    id:{
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+  const ContactInfo = sequelize.define(
+    "ContactInfo",
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: false
+    {
+      freezeTableName: true,
+      timestamps: true,
     }
-  },{
-    freezeTableName: true,
-    timestamps:true,
-  });
+  );
 
-  const Tweet = sequelize.define('Tweet', {
-    id:{
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+  const Tweet = sequelize.define(
+    "Tweet",
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-  },{
-    timestamps:true,
-  });
+    {
+      timestamps: true,
+    }
+  );
 
   //hasOne, belognsTo, hasMany, belongsToMany
 
@@ -64,8 +77,8 @@ module.exports = (sequelize) => {
   User.hasOne(ContactInfo, {
     foriegnKey: {
       type: DataTypes.UUID,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   });
   ContactInfo.belongsTo(User);
 
@@ -73,14 +86,22 @@ module.exports = (sequelize) => {
   User.hasMany(Tweet, {
     foriegnKey: {
       type: DataTypes.UUID,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   });
   Tweet.belongsTo(User);
 
   //many-to-many => belongsToMany
-  User.belongsToMany(User, {as: "User", foreignKey: "UserId", through: "Follow"});
-  User.belongsToMany(User, {as: "Followed", foreignKey: "FollowedId", through: "Follow"});
+  User.belongsToMany(User, {
+    as: "User",
+    foreignKey: "UserId",
+    through: "Follow",
+  });
+  User.belongsToMany(User, {
+    as: "Followed",
+    foreignKey: "FollowedId",
+    through: "Follow",
+  });
 
-  sequelize.sync({alter: true}); //force: true
-}
+  sequelize.sync({ alter: true }); //force: true. sync creates a table if it doesn't exist already.
+};
