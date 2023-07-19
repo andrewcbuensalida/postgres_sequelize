@@ -14,7 +14,8 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: "John",
-        get() { // process data before returning to client
+        get() {
+          // process data before returning to client
           const rawValue = this.getDataValue("firstName");
           return rawValue ? rawValue.toUpperCase() : null;
         },
