@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
       },
     },
     {
-      timestamps: true,
+      timestamps: true, // false won't create createdAt, updatedAt columns 
     }
   );
 
@@ -75,7 +75,7 @@ module.exports = (sequelize) => {
 
   //one-to-one => hasOne, belognsTo
   User.hasOne(ContactInfo, {
-    foriegnKey: {
+    foreignKey: {
       type: DataTypes.UUID,
       allowNull: false,
     },
@@ -84,7 +84,7 @@ module.exports = (sequelize) => {
 
   //one-to-many => hasMany, belognsTo
   User.hasMany(Tweet, {
-    foriegnKey: {
+    foreignKey: {
       type: DataTypes.UUID,
       allowNull: false,
     },
@@ -103,5 +103,5 @@ module.exports = (sequelize) => {
     through: "Follow",
   });
 
-  sequelize.sync({ alter: true }); //force: true. sync creates a table if it doesn't exist already.
+  sequelize.sync(); //force: true will drop table and recreate it again. alter: true won't recreate, just add changes, but for some reason this is getting a drop constraint error, maybe race conditions. match: /regex/ will drop the table if regex matches the database name.
 };

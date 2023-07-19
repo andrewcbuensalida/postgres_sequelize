@@ -9,7 +9,7 @@ class UserService {
 
   async createUser({ firstName, lastName, email }) {
     try {
-      const user = await this.models.User.create({
+      const user = await this.models.User.create({ // User comes from models/sequelize/index.js User. We didn't create the create method manually. It comes from sequelize.
         firstName,
         lastName,
         email,
