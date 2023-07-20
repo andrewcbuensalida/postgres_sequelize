@@ -24,7 +24,7 @@ class TweetService {
   async getAllTweets() {
     try {
       const allTweets = await this.models.Tweet.findAll({
-        include: {
+        include: { // include's value could also jut be this.models.User
           model: this.models.User,
           attributes: { exclude: ["updatedAt", "createdAt"] },
         },

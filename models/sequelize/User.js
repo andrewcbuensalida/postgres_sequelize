@@ -39,6 +39,7 @@ module.exports = (sequelize) => {
           this.setDataValue("password", `hashed(${value})`);
         },
       },
+      // can also have a virtual field that isn't in the database, then have getters and setters.
     },
     {
       // freezeTableName: true
@@ -46,7 +47,7 @@ module.exports = (sequelize) => {
       timestamps: true,
       createdAt: false,
       updatedAt: "updateTimeStamp",
-      paranoid: true,
+      paranoid: true, // soft deletion. sets a flag that a user is deleted, but doesn't delete it completely. true adds a deletedAt column. You can still force complete deletion with a force: true option in the destroy method. If soft-deleted, can restore.
     }
   );
 

@@ -9,9 +9,10 @@ class UserService {
 
   async createUser({ firstName, lastName, email, password }) {
     try {
+      // create is a combination of build and save
       const user = await this.models.User.create({
         // User comes from models/sequelize/index.js User. We didn't create the create method manually. It comes from sequelize.
-        firstName,
+        firstName, 
         lastName,
         email,
         password,
@@ -26,7 +27,7 @@ class UserService {
   async getAllUsersAttributes() {
     try {
       const users = await this.models.User.findAll({
-        // attributes: ['firstName', 'lastName', 'email'] // include only these attributes (columns) of the users
+        // attributes: ['firstName', 'lastName', 'email'] // include only these attributes (columns) of the users. Can alias if pass an array like ['firstName','First Name']. // can also get aggregates with this.client.fn('COUNT',this.client.col('firstName')) . can group, and order, etc. an do raw: true so we don't have to use toJson() on users to get rid of the metadata.
         attributes: { exclude: ["updatedAt"] }, // to exclude these attributes
       });
       return users;
@@ -66,7 +67,7 @@ class UserService {
   async getAllUsers() {
     try {
       const users = await this.models.User.findAll({
-        include: [
+        include: [ // this is possible (getting records from other related tables) because the associations like hasOne, belongsTo
           {
             model: this.models.ContactInfo,
             attributes: {
@@ -124,10 +125,10 @@ class UserService {
     try {
       const currentUser = await this.findOneUser();
       const toFollowUser = await this.models.User.findOne({
-        where: { firstName: "tom" },
+        where: { firstName: "Andrew" },
       });
-      currentUser.addUser(toFollowUser);
-      return currentUser.getUser();
+      await currentUser.addUser(toFollowUser); // creates a record in the Follow join table and uses the UserId of the toFollowUser for the FollowedId
+      return currentUser.getUser(); // these methods are generated based on the belongsToMany as attribute. If no as attribute, it'll be the name of the model.
     } catch (err) {
       return err;
     }

@@ -28,6 +28,9 @@ module.exports = (sequelize) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: { 
+          isEmail: true,
+        },
       },
       password: {
         type: DataTypes.STRING,
@@ -38,6 +41,7 @@ module.exports = (sequelize) => {
       },
     },
     {
+      // can have validate here too for model wide
       timestamps: true, // false won't create createdAt, updatedAt columns
     }
   );
@@ -56,7 +60,7 @@ module.exports = (sequelize) => {
       },
     },
     {
-      freezeTableName: true,
+      freezeTableName: true, // this will prevent pluralizing ContactInfo
       timestamps: true,
     }
   );
@@ -83,30 +87,30 @@ module.exports = (sequelize) => {
     }
   );
 
-  //hasOne, belognsTo, hasMany, belongsToMany
+  //hasOne, belongsTo, hasMany, belongsToMany
 
-  //one-to-one => hasOne, belognsTo
+  //one-to-one => hasOne, belongsTo. This creates a UserId column in the ContactInfo table. second argument is optional, it makes sure the foreign key is not null and is a uuid. The foreign key should be the one with many.
   User.hasOne(ContactInfo, {
     foreignKey: {
       type: DataTypes.UUID,
-      allowNull: false,
+      // allowNull: false,
     },
   });
   ContactInfo.belongsTo(User);
 
-  //one-to-many => hasMany, belognsTo
+  //one-to-many => hasMany, belongsTo
   User.hasMany(Tweet, {
     foreignKey: {
       type: DataTypes.UUID,
-      allowNull: false,
+      // allowNull: false,
     },
   });
   Tweet.belongsTo(User);
 
-  //many-to-many => belongsToMany
+  //many-to-many => belongsToMany. // this creates a join table called Follow
   User.belongsToMany(User, {
-    as: "User",
-    foreignKey: "UserId",
+    as: "User", // alias so it will becomme getUser in UserService.js
+    foreignKey: "UserId", // this is the column name. Without this, it defaults to UserId.
     through: "Follow",
   });
   User.belongsToMany(User, {
@@ -115,6 +119,6 @@ module.exports = (sequelize) => {
     through: "Follow",
   });
 
-  // sequelize.sync({ alter: true }); //force: true will drop table and recreate it again. alter: true won't recreate, just add changes, but for some reason this is getting a drop constraint error, maybe race conditions. match: /regex/ will drop the table if regex matches the database name.
-  sequelize.sync();
+  // sequelize.sync({ alter: true }); //force: true will drop table and recreate it again. alter: true won't recreate, just add changes, but for some reason this is getting a drop constraint error, maybe race conditions. match: /regex/ will drop the table if regex matches the table name.
+  sequelize.sync(); // could also use sync for each model, like User.sync()
 };

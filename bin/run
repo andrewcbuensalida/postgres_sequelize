@@ -8,7 +8,7 @@ const config = require('../config')[process.env.NODE_ENV || 'development'];
 const log = config.log();
 const App = require('../app')
 
-const sequelize = new Sequelize(config.postgres.options);
+const sequelize = new Sequelize(config.postgres.options); // could pass in options to be applied to all tables here
 
 function connectToPostgres() {
   sequelize.authenticate().then(() => {
